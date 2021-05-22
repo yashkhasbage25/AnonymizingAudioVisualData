@@ -1,9 +1,3 @@
-## Welcome to GitHub Pages
-
-You can use the [editor on GitHub](https://github.com/yashkhasbage25/AnonymizingAudioVisualData/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
-
 ### Anonymizing AudioVisual Data 
 #### with RedHen Labs
 
@@ -11,3 +5,12 @@ Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://j
 
 However, AudioVisual Data with RedHen is not shareable due to privacy reasons. Hence, using Audio Processing techniques, classical computer vision algorithms and recent Deep Learning algorithms we propose an anonymization engine for RedHen. 
 
+## About
+
+This is the official blog post for Anonymization project. 
+
+I am very thankful to Google and RedHen Labs for this opportunity. Hoping to get an excellent experience with RedHen Labs. 
+
+## Timeline
+
+18 May: A great day! I will be working with RedHen.
