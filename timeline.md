@@ -11,6 +11,6 @@ order: 2
 
 30 May: Received the IRB proposal
 
-* [Meeting 1 June]()
+* [Meeting 1 June]({{ '/' | AnonymizingAudioVisualData/2021/06/01/meeting-june-1.html}})
 
 [Go to the Home Page]({{ '/' | absolute_url }})
