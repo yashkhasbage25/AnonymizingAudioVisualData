@@ -14,3 +14,5 @@ I am very thankful to Google and RedHen Labs for this opportunity. Hoping to get
 ## Timeline
 
 18 May: A great day! I will be working with RedHen.
+
+My notes for CWRU HPC usage: 

@@ -1,1 +1,15 @@
 theme: jekyll-theme-cayman
+
+title: Yash Khasbage
+email: yashkhasbage25@gmail.com
+description: Official blog for Anonymizing AudioVisual Data in RedHen Labs
+
+icon: 🔥
+
+collections:
+  notes:
+    defaults: 
+      layout: page
+    output: true
+    permalink: /notes/:path/
+
