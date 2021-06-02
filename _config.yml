@@ -28,7 +28,7 @@ plugins:
 target-blank:
     rel: nofollow
 
-header_page_refs: ['now', 'about', 'contact']
+header_page_refs: ['home', 'now', 'about', 'contact']
 
 icon: 🔥
 
