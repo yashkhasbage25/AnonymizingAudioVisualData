@@ -1,8 +1,34 @@
-theme: jekyll-theme-cayman
-
-title: Yash Khasbage
-email: yashkhasbage25@gmail.com
+title: Red Hen Anonymizer
 description: Official blog for Anonymizing AudioVisual Data in RedHen Labs
+show_downloads: false
+email: yashkhasbage25@gmail.com
+
+baseurl: # change this to the subpath of your site, e.g. /blog. Leave it empty if you don't need it.
+url: "https://yashkhasbage25.github.io" # change this to the base hostname & protocol for your site
+
+
+google_analytics:
+
+# cayman-blog date format
+# refer to http://shopify.github.io/liquid/filters/date/ if you want to customize this
+cayman-blog:
+  date_format: "%b %-d, %Y"
+
+theme: # leave it empty
+
+# social
+author: Yash Khasbage
+image: /thumbnail-jumbo.png
+twitter:
+  username: yashkhasbage25
+
+plugins:
+  - jekyll-target-blank
+
+target-blank:
+    rel: nofollow
+
+header_page_refs: ['now', 'about', 'contact']
 
 icon: 🔥
 
@@ -12,4 +38,3 @@ collections:
       layout: page
     output: true
     permalink: /notes/:path/
-
