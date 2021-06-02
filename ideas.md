@@ -1,6 +1,7 @@
 ---
 layout: page
 title: Ideas
+permalink: /ideas.html
 tagline: Thinking process.... structured planning.....
 ref: ideas
 order: 1
