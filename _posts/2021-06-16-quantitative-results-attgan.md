@@ -15,3 +15,10 @@ CelebA consists of thousands of celebrities. We will train a KNN with features o
 
 First, we see how each single attribute can affect. Then, we can see the top-3 to 5 attributes which work best. We can form various combinations of these attributes as final set of attributes to be presented. 
 
+| Attribute | Accuracy |
+|:---------:|:--------:|
+| Bald      |  75.39   |
+| Bangs     |  50.61   |
+| Black Hair|  33.70   |
+| Blond Hair|  41.85   |
+| Brown Hair|  14.61   |
