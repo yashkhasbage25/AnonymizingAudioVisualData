@@ -15,6 +15,20 @@ CelebA consists of thousands of celebrities. We will train a KNN with features o
 
 First, we see how each single attribute can affect. Then, we can see the top-3 to 5 attributes which work best. We can form various combinations of these attributes as final set of attributes to be presented. 
 
+Attributes: "Bald",
+        "Bangs",
+        "Black_Hair",
+        "Blond_Hair",
+        "Brown_Hair",
+        "Bushy_Eyebrows",
+        "Eyeglasses",
+        "Male",
+        "Mouth_Slightly_Open",
+        "Mustache",
+        "No_Beard",
+        "Pale_Skin",
+        "Young"
+
 | Attribute | Accuracy |
 |:---------:|:--------:|
 | Bald      |  75.39   |
@@ -22,3 +36,10 @@ First, we see how each single attribute can affect. Then, we can see the top-3 t
 | Black Hair|  33.70   |
 | Blond Hair|  41.85   |
 | Brown Hair|  14.61   |
+| Bushy Eyebrows| 41.00|
+| Male      |  87.94   |
+| Mouth Open|  14.11   |
+| Mustache  |  43.39   |
+| No Beard  |          |
+| Pale Skin |          |
+| Young     |          | 
