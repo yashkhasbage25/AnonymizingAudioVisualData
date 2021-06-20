@@ -13,17 +13,19 @@ I have checked a lot of libraries on https://github.com/faroit/awesome-python-sc
 pysndfx is build on SoX, which has a wrapper https://pysox.readthedocs.io/en/latest/example.html . 
 
 
-Pitch: sox.pitch(n_semitones: float, quick: bool = False)
+Pitch: pitch(n_semitones: float, quick: bool = False)
 
-Treble: sox.treble(gain_db, frequency, slope)	
-Bass: bass(gain_db, frequency, slope)	
+Treble: treble(gain_db: float, frequency: float = 3000.0, slope: float = 0.5)
 
-Distortion: sox.overdrive(gain_db: float = 20.0, colour: float = 20.0)
+Bass: bass(gain_db: float, frequency: float = 100.0, slope: float = 0.5)
 
-Echo: sox.echo(gain_in, gain_out, n_echos, delays, decays)	
-sox.echos(gain_in, gain_out, n_echos, delays, decays)	
+Distortion: overdrive(gain_db: float = 20.0, colour: float = 20.0)
 
-Reverb: sox.reverb(reverberance, high_freq_damping, …)	
+Echo: echo(gain_in: float = 0.8, gain_out: float = 0.9, n_echos: int = 1, delays: List[float] = [60], decays: List[float] = [0.4])	
+
+echos(gain_in: float = 0.8, gain_out: float = 0.9, n_echos: int = 1, delays: List[float] = [60], decays: List[float] = [0.4])
+
+reverb(reverberance: float = 50, high_freq_damping: float = 50, room_scale: float = 100, stereo_depth: float = 100, pre_delay: float = 0, wet_gain: float = 0, wet_only: bool = False)
 
 
 Important pages: 
