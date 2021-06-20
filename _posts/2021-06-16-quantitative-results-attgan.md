@@ -29,6 +29,8 @@ Attributes: "Bald",
         "Pale_Skin",
         "Young"
 
+### Single Feature Results
+
 | Attribute | Accuracy |
 |:---------:|:--------:|
 | Bald      |  75.39   |
@@ -40,6 +42,16 @@ Attributes: "Bald",
 | Male      |  87.94   |
 | Mouth Open|  14.11   |
 | Mustache  |  43.39   |
-| No Beard  |          |
-| Pale Skin |          |
-| Young     |          | 
+| No Beard  |  28.96   |
+| Pale Skin |  39.03   |
+| Young     |  39.77   | 
+
+### Cumulative Feature Results
+
+| Attribute | Accuracy |
+|:---------:|:--------:|
+| Male      |  87.94   |
+| + Bald    |          |
+| + Bangs   |          |
+| + Mustache|          |
+| + Blond Hair|        |
