@@ -1,6 +1,6 @@
 ---
 layout: post
-title: How to anonymize audio?
+title: First steps of Anonymizing Audio
 ---
 
 The proposal stated 6 effects for anonymization: pitch, bass and treble, distortion, echo, reverb, and wah-wah effect
@@ -26,6 +26,25 @@ Echo: echo(gain_in: float = 0.8, gain_out: float = 0.9, n_echos: int = 1, delays
 echos(gain_in: float = 0.8, gain_out: float = 0.9, n_echos: int = 1, delays: List[float] = [60], decays: List[float] = [0.4])
 
 reverb(reverberance: float = 50, high_freq_damping: float = 50, room_scale: float = 100, stereo_depth: float = 100, pre_delay: float = 0, wet_gain: float = 0, wet_only: bool = False)
+
+
+## Qualitative Analysis of SoX
+
+The anonymization predominantly is effective due to pitch change. Chorus and echo do create an effect, however, they also make audio unnatural 
+
+Further complex effects like bass, treble, reverb, flanger, etc. create more unnaturalness as compared to anonymization. 
+
+Hence, such effects are better to be used as "Transformers" as compared to "Anonymizer". Some discussions on the internet emphasise that pitch is the basic attribute to be changed for anonymization, and it will surely work. But, it will be better we have more than one attribute for anonymization. 
+
+The question arises: what are differences between audios of same pitch? can we leverage those for further anonymization. 
+
+
+#### Can randomly increasing/decreasing pitch, lead to anonymization?
+
+Yes, but in some cases. The catch is: male voice is low and female voice is high. Increasing the high voice further, does not affect much. Similarly, for male voice. 
+
+We need to compute the pitch of average male and female voices. Given an audio, we need to guess its gender based on the average pitch data. From this, we can estimate the increase/decrease required. 
+
 
 
 Important pages: 

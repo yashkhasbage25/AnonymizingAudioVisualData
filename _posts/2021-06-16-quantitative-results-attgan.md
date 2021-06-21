@@ -51,7 +51,7 @@ Attributes: "Bald",
 | Attribute | Accuracy |
 |:---------:|:--------:|
 | Male      |  87.94   |
-| + Bald    |          |
-| + Bangs   |          |
-| + Mustache|          |
+| + Bald    |  97.62   |
+| + Bangs   |  95.94   |
+| + Mustache|  98.51   |
 | + Blond Hair|        |
