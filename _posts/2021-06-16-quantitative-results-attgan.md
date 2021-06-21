@@ -48,10 +48,17 @@ Attributes: "Bald",
 
 ### Cumulative Feature Results
 
+In this section, we consider the top-5 attributes that were successful in anonymizing. We study how using them together can be more beneficial. 
+
+We begin with the most successful attribute: Male. The top-second attribute is Bald, we report the effectiveness of Male + Bald. The top-third attribute is Bangs, hence we evaluate the effectiveness of Male + Bald + Bangs. We continue this further, to include Male + Bald + Bangs + Mustache and Male + Bald + Bangs + Mustache + Blond Hair. 
+
+It is evident from the top-5 attributes that facial hair play major role in anonymization. Facial hair can be considered as a means to create occlusions, or add some extra information about person (for example, guessing the face of person when he/she is significantly convered with hair). This justifies its effectiveness in anonymizing. 
+
+
 | Attribute | Accuracy |
 |:---------:|:--------:|
 | Male      |  87.94   |
 | + Bald    |  97.62   |
 | + Bangs   |  95.94   |
 | + Mustache|  98.51   |
-| + Blond Hair|        |
+| + Blond Hair| 99.59  |
