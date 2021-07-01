@@ -14,7 +14,7 @@ As a first step, we willl anonymize 6 videos:
 
 * The videos are high resolution. Face occupies only a small part of it. Using AttGAN over complete video will make it slow and memory-consuming. 
 Thus, we need to extract the face first, transform the face, and place it back at right location in video. There are several recent high-accuracy 
-face detectors, however with simple lab-based videos, we don't need any sophisticated method. Viola-Jones 
+face detectors, however with simple lab-based videos, we don't need any sophisticated method. Haar-Cascade detector will work in such cases. 
 
 * AttGAN requires the original attributes of the person to be anonymized. This was not an issue when we tried it on CelebA dataset, as the dataset already provides 
 such attribution. However, we need to get attribution for general videos. This can be accomplished by creating a classifier that predicts the attributes. 
