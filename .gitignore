@@ -5,3 +5,5 @@ Gemfile.lock
 *.gem
 vendor/*
 .jekyll-metadata
+audio_transform
+assets/img/attgan
