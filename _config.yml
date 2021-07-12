@@ -24,6 +24,7 @@ twitter:
 
 plugins:
   - jekyll-target-blank
+  - jemoji
 
 target-blank:
     rel: nofollow
