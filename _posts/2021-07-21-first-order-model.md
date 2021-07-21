@@ -30,9 +30,14 @@ To certain extent the face movements of the speaker are well-captured by FOM.
 The best way to get Source images is https://generated.photos/faces
 This website has several AI-generated faces for free. I have used them here. 
 
-and they are in-sync. No difference in speed of any video. 
+Link to results: https://drive.google.com/drive/folders/19P5HsncUv8_aFO9NrWdwmbXQoTSJoqkP?usp=sharing
+
+They are in-sync. No difference in speed of any video. 
 
 ### My thoughts
 
 Some face expressions are not captured well. This method only works for face oriented videos. We need to find other method that can work for full body. Overall, this method is just okay, and not very good. Please share your opinions. 
 
+### Next step
+
+Full body anonymization: https://github.com/snap-research/articulated-animation
