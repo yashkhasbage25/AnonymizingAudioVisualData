@@ -27,8 +27,11 @@ Results: https://drive.google.com/drive/folders/1AJlvaqIIHsFZx1kzVb7SRM87NHGPAx9
 
 File organization: 
 Original Videos: lab_1.mp4, lab_2.mp4 (the demo videos)
+
 Target Faces (Imaginary AI-generated faces): man1.jpg, woman1.jpg
-Anonymized videos have the form <target_face>_<original_video>.mp4
+
+Anonymized videos have the form target_face_original_video.mp4
+
 For example, man1_lab1.mp4 is formed using man1.jpg and original video lab1.mp4
 List of anonymized videos:
 1. man1_lab1.mp4 = man1.jpg + lab_1.mp4
