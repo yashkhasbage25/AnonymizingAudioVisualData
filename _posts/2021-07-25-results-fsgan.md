@@ -15,17 +15,6 @@ Video: https://arxiv.org/pdf/1908.05932.pdf
 
 License: CC0-1.0
 
-Paper: 
-    ---
-    @inproceedings{nirkin2019fsgan,
-    title={{FSGAN}: Subject agnostic face swapping and reenactment},
-    author={Nirkin, Yuval and Keller, Yosi and Hassner, Tal},
-    booktitle={Proceedings of the IEEE International Conference on Computer Vision},
-    pages={7184--7193},
-    year={2019}
-    }
-    ---
-
 Colab: https://github.com/YuvalNirkin/fsgan/blob/master/inference/face_swapping.ipynb
 
 Dependencies: git clone https://github.com/YuvalNirkin/face_detection_dsfd
