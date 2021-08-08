@@ -45,4 +45,4 @@ We have the following categories of faces:
 6. kids
 7. glasses
 
-On an average, there are 5 faces in each category. 
+There are alteast 5 faces in each category. 
