@@ -19,4 +19,4 @@ When I played the video in video player of drive, the first 1 sec was clearly vi
 
 After more searching, I found that doing a ffprobe from python's ffmpeg shows the start time, and again I found the start time of 1 sec there. 
 
-The mystery was solved. However, I don't remember what was the command the cut the video with such start times. 
+The mystery was solved. However, I don't remember what was the command that cut the video with such start times. 
