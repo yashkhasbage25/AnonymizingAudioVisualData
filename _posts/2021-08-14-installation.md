@@ -11,15 +11,19 @@ The RHA (Red Hen Anonymizer) is used to anonymize the faces in videos. You can e
 
 ### Dependencies
 
-The face hider requires only a package of Opencv, ffmpeg-python and MTCNN. So one can follow these commands
+Audio anonymizer requires sox
+
+```bash
+pip install sox # do not use conda install
+```
+
+The face hider requires packages of opencv, ffmpeg-python and MTCNN. So one can follow these commands
 
 ```bash
 conda install -c conda-forge opencv
 conda install -c conda-forge mtcnn
 pip install ffmpeg-python
 ```
-
-
 
 These are a few installations for swapper
 
@@ -33,78 +37,45 @@ pip install tensorboardX
 pip install ffmpeg-python
 ```
 
-and follow these instructions for completing installations:
-
-For understanding the face-swapper/replacer, we need to get some idea of the execution of modules. Here, we will analyze only for swapper, as hider is very simple without any complications. 
-
-* The metadata of the input video is extracted. This involves getting start times. 
-* Swap the faces:
-    - call the script swap.py whose location is fsgan/inference/swap.py
-    - this further calls face_detector.py which is located at face_detection_dsfd/face_detector.py 
-    - there are some intermediate files and folders formed which store some temporary data. we need not worry about them though. 
-- the audio is extracted from video using ffmpeg
-- audio is anonymized using audio.py, which is located at ./audio.py
-- audio and video are combined using ffmpeg
-
-In the directory containing rha.py clone these two repos
+Clone the repo 
 ```bash
-git clone https://github.com/YuvalNirkin/face_detection_dsfd
-git clone https://github.com/YuvalNirkin/fsgan
-```
+git clone https://github.com/yashkhasbage25/AnonymizingAudioVisualData.git --depth 1 
+# remove --depth 1 if you want to check how the code was gradually developed
+``` 
 
 **If your machine has GPUs, do use them or the behaviour is unpexpected** . Correcting this will unnecesarrily increase the amount of manual changes needed. 
 
 
-(Ignore this if you will anyways use GPUs)
-Make these changes in face_detection_dsdf/face_detector.py :
-1. line 33
-self.net.load_state_dict(torch.load(detection_model_path))
-to 
-self.net.load_state_dict(torch.load(detection_model_path, map_location=self.device))
+### Not everyone is allowed to run RHA
 
-2. line 72
-torch.set_default_tensor_type('torch.cuda.FloatTensor')
+The FSGAN present in RHA can be used for defaming or creating DeepFakes. Hence, its usage it not open to general public. The pretrained weights for FSGAN are not provided in this public repository for the same purpose. 
+
+If you want to get access to pretrained weights of FSGAN directly from FSGAN team, see the page https://github.com/YuvalNirkin/fsgan/wiki/Paper-Models-Inference and fill out their form. Upon knowing your purpose of using FSGAN,  they will share you a script download_fsgan_models.py. You need to place it at AnonymizingAudioVisualData/fsgan/download_fsgan_models.py. Change its line 
+```python 
+from fsgan.utils.utils import download_from_url
+```
 to 
 ```python
-if self.gpus:
-    torch.set_default_tensor_type('torch.cuda.FloatTensor')
-else:
-    torch.set_default_tensor_type('torch.FloatTensor')
-```
+from utils.utils import download_from_url
+``` 
+The file download_fsgan_models.py can also be requested from the RedHen mentors (specifically, Mark Turner, Francis Steen, Peter Uhrig, Karan Singla, Daniel Alcaraz). Then the same instructions as mentioned above, can be followed. 
 
-(Ignore this if you will anyways use GPUs)
-Changes needed in fsgan/criterions/vgg_loss.py
-1. line 22:
-checkpoint = torch.load(model_path)
-to 
+Then, run the script
 ```bash
-if torch.cuda.is_available():
-    checkpoint = torch.load(model_path)
-else:
-    checkpoint = torch.load(model_path, map_location="cpu")
+python download_fsgan_models.py -m v2 
 ```
 
-Changes needed in fsgan/inference/swap.py
-1. add these lines before all import statements: 
+This will download the pretrained models at correct places.
 
-```import sys
-sys.path.append('<path-to-directory containing rha.py>')
-```
-
-This will make face detection and fsgan modules visible to rha.py . Note that the path to directory has to be absolute path, i.e., the path beginning from root. For example: "/home/yck5/projects" where rha.py will be located as /home/yck5/projects/rha.py
-
-(Ignore this if you will anyways use GPUs)
-Changed needed in fsgan/utils/utils.py
-1. checkpoint = torch.load(model_path)
-to 
-checkpoint = torch.load(model_path, map_location=device)
-
-
-With these changes, we can run rha.py
+*** RHA face-swapper cannot be used at all without this step ***
 
 ### Running RHA
 
-rha.py is a single file for running hider and swapper. 
+Enter into the cloned repo
+```bash
+cd AnonymizeAudioVisualData
+```
+There you can find rha.py. It is a single file for running hider and swapper. 
 
 Swapper:
 ```bash
@@ -112,13 +83,23 @@ python rha.py --input <input_video_path> --facepath <path_to_face image> --outpa
 ```
 
 For hider, do not use the --facepath option of the above command.
-facepath is the imaginary face or a target face that should be present in the anonymized video. It should be clear enough. A 256x256 size photo is usually recommended, but you can try other sizes also. Recabgular photos are not allowed. However, input video can have any size and frame.  
 
 
-Pitch option is used for anonymizing audio. The value provided will change the pitch by that amount. It has to be an integer. Usually, values near zero, hardly make any changes. Zero value actually, leaves the sound unchanged. Hence if you do  not want to change sound, use --pitch 0. It is known that female voice has high pitch and male voice has low pitch. Hence use a positive value like 3,4,5, etc to make it female-like. Use negative values likes -3, -4, -5 etc to make it more male-like. 
+facepath is the imaginary face or a target face that should be present in the anonymized video. It should be visually visible. A 256x256 size photo is usually recommended, but you can try other sizes also. Rectangular photos are not allowed. However, input video can have any size and frame.  
 
-For running of cpu, you need to use --cpu_only flag. This will only work for swapper. For hider, the use of gpu/cpu will depend on the tensorflow-gpu/cpu installed. 
+
+Pitch option is used for anonymizing audio. The value provided will change the pitch by that amount. It has to be an integer (both positive and negative integers). Usually, values near zero, hardly make any changes. Zero value actually, leaves the sound unchanged. Hence if you do  not want to change sound, use --pitch 0. 
+
+It is known that female voice has high pitch and male voice has low pitch. Hence use a positive value like 3,4,5, etc to make it female-like. Use negative values likes -3, -4, -5 etc to make it more male-like. 
+
+For running on cpu, you need to use --cpu_only flag. This will only work for swapper. For hider, the use of gpu/cpu will depend on the tensorflow-gpu/cpu installed. 
 
 Additionally, we recommend the use of our facebank to get random target faces. 
 
 There are some more installations mentioned in https://github.com/YuvalNirkin/fsgan/wiki/Ubuntu-Installation-Guide . However, these are mostly present in every modern linux distribution. I don't think anybody will ever need to do the apt-get mentioned in this page.
+
+If your machine has 4 gpus, and you want to use only gpus 0,3 (indexing starts at 0) then do
+
+```bash
+CUDA_VISIBLE_DEVICES=0,3 python rha.py <remaining_options>
+```

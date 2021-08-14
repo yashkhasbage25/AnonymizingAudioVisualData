@@ -1,4 +1,3 @@
-_site
 .sass-cache
 .bundle
 Gemfile.lock
@@ -8,4 +7,5 @@ vendor/*
 audio_transform
 assets/img/attgan
 fsgan/
-face_detection*
+face_detection_dsfd
+_site
