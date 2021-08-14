@@ -5,6 +5,6 @@ The audio-visual data with RedHen Labs is not freely shareable due to privacy is
 
 ## About
 
-This is the official blog post for Anonymization project. 
+For more details about the project, see https://yashkhasbage25.github.io/AnonymizingAudioVisualData/
 
-I am very thankful to Google and RedHen Labs for this opportunity. Hoping to get an excellent experience with RedHen Labs. 
+For using the anonymizer, see https://yashkhasbage25.github.io/AnonymizingAudioVisualData/2021/08/14/installation.html
