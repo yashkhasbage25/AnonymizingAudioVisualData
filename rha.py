@@ -7,6 +7,12 @@ import shutil
 import os.path as osp
 import subprocess
 
+pypath = "PYTHONPATH"
+if pypath in os.environ:
+    os.environ[pypath] += ":" + osp.abspath(".")
+else:
+    os.environ[pypath] = osp.abspath(".")
+
 def parse_args():
     
     parser = argparse.ArgumentParser(

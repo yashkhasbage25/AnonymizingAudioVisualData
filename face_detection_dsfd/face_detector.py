@@ -30,7 +30,7 @@ class FaceDetector(object):
 
         # Initialize detection model
         self.net = SSD("test").to(self.device)
-        self.net.load_state_dict(torch.load(detection_model_path))
+        self.net.load_state_dict(torch.load(detection_model_path, map_location=self.device))        
         self.net.eval()
 
         # Initialize configuration
@@ -69,7 +69,10 @@ class FaceDetector(object):
         image_size = (input_vid_height, input_vid_width)
 
         # Set default tensor type
-        torch.set_default_tensor_type('torch.cuda.FloatTensor')
+        if self.gpus:
+            torch.set_default_tensor_type('torch.cuda.FloatTensor')
+        else:
+            torch.set_default_tensor_type('torch.FloatTensor')
 
         # For each frame in the video
         frame_bgr_list = []

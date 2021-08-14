@@ -175,7 +175,7 @@ def load_model(model_path, name='', device=None, arch=None, return_checkpoint=Fa
     assert model_path is not None, '%s model must be specified!' % name
     assert os.path.exists(model_path), 'Couldn\'t find %s model in path: %s' % (name, model_path)
     print('=> Loading %s model: "%s"...' % (name, os.path.basename(model_path)))
-    checkpoint = torch.load(model_path)
+    checkpoint = torch.load(model_path, map_location=device)
     assert arch is not None or 'arch' in checkpoint, 'Couldn\'t determine %s model architecture!' % name
     arch = checkpoint['arch'] if arch is None else arch
     model = obj_factory(arch)

@@ -19,7 +19,10 @@ class Vgg19(torch.nn.Module):
             vgg_pretrained_features = models.vgg19(pretrained=True).features
         else:
             model = vgg19(pretrained=False)
-            checkpoint = torch.load(model_path)
+            if torch.cuda.is_available():
+                checkpoint = torch.load(model_path)
+            else:
+                checkpoint = torch.load(model_path, map_location="cpu")
             del checkpoint['state_dict']['classifier.6.weight']
             del checkpoint['state_dict']['classifier.6.bias']
             model.load_state_dict(checkpoint['state_dict'], strict=False)
