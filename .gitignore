@@ -3,3 +3,6 @@ face_recognition/anon
 **__pycache__**
 audio_transform
 .sass-cache
+_site
+assets
+Gemfile.lock
