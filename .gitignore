@@ -7,3 +7,5 @@ vendor/*
 .jekyll-metadata
 audio_transform
 assets/img/attgan
+fsgan/
+face_detection*
