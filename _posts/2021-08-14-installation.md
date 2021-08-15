@@ -103,3 +103,20 @@ If your machine has 4 gpus, and you want to use only gpus 0,3 (indexing starts a
 ```bash
 CUDA_VISIBLE_DEVICES=0,3 python rha.py <remaining_options>
 ```
+
+### Demo 
+
+Download the video covid.mp4 and face-image random_face.jpg from https://drive.google.com/drive/folders/1y3kytBHZULQ2gLDL0xKBmq2oR4uPx0D4?usp=sharing .
+Place them along with rha.py and run
+
+Face Hider:
+```bash
+python rha.py --inpath covid.mp4 --outpath hider_output.mp4 --pitch -4
+```
+
+Face Swapper:
+```bash
+python rha.py --inpath covid.mp4 --facepath random_face.jpg --outpath swapper_output.mp4 --pitch -4
+```
+
+You can set pitch according to your choice. But since, the target face is male, we prefer a low pitched voice. 
