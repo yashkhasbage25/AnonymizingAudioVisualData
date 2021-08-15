@@ -94,7 +94,7 @@ It is known that female voice has high pitch and male voice has low pitch. Hence
 
 For running on cpu, you need to use --cpu_only flag. This will only work for swapper. For hider, the use of gpu/cpu will depend on the tensorflow-gpu/cpu installed. 
 
-Additionally, we recommend the use of our facebank to get random target faces. 
+Additionally, we recommend the use of our facebank to get random target faces. (https://drive.google.com/drive/folders/1EGiVI3fMLwNiYG-Es-Sy5qqie9Co2eZI?usp=sharing)
 
 There are some more installations mentioned in https://github.com/YuvalNirkin/fsgan/wiki/Ubuntu-Installation-Guide . However, these are mostly present in every modern linux distribution. I don't think anybody will ever need to do the apt-get mentioned in this page.
 
@@ -119,4 +119,4 @@ Face Swapper:
 python rha.py --inpath covid.mp4 --facepath random_face.jpg --outpath swapper_output.mp4 --pitch -4
 ```
 
-You can set pitch according to your choice. But since, the target face is male, we prefer a low pitched voice. 
+You can set pitch according to your choice. But since, the target face is male, we prefer a low pitched voice. We encourage you to try out several target faces, by downloading the facebank. (https://drive.google.com/drive/folders/1EGiVI3fMLwNiYG-Es-Sy5qqie9Co2eZI?usp=sharing)
