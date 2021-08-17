@@ -16,12 +16,15 @@ import pickle
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 import numpy as np
+import os.path as osp
 import cv2
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data import RandomSampler, DataLoader
+fsgan_path = osp.dirname(osp.dirname(osp.dirname(__file__)))
+sys.path.append(fsgan_path)
 from fsgan.preprocess.preprocess_video import VideoProcessBase, base_parser
 from fsgan.utils.obj_factory import obj_factory
 from fsgan.utils.utils import load_model
@@ -35,7 +38,7 @@ from fsgan.datasets.appearance_map import AppearanceMapDataset
 from fsgan.utils.video_renderer import VideoRenderer
 from fsgan.utils.batch import main as batch
 
-
+dirname = osp.dirname(__file__)
 parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                                  parents=[base_parser])
 parser.add_argument('source', metavar='SOURCE', nargs='+',
@@ -51,12 +54,12 @@ parser.add_argument('-st', '--select_target', default='longest', metavar='STR',
 parser.add_argument('-b', '--batch_size', default=8, type=int, metavar='N',
                     help='mini-batch size')
 parser.add_argument('-rm', '--reenactment_model', metavar='PATH',
-                    default='../weights/nfv_msrunet_256_1_2_reenactment_v2.1.pth', help='reenactment model')
-parser.add_argument('-cm', '--completion_model', default='../weights/ijbc_msrunet_256_1_2_inpainting_v2.pth',
+                    default=osp.join(dirname, '../weights/nfv_msrunet_256_1_2_reenactment_v2.1.pth'), help='reenactment model')
+parser.add_argument('-cm', '--completion_model', default=osp.join(dirname, '../weights/ijbc_msrunet_256_1_2_inpainting_v2.pth'),
                     metavar='PATH', help='completion model')
-parser.add_argument('-bm', '--blending_model', default='../weights/ijbc_msrunet_256_1_2_blending_v2.pth',
+parser.add_argument('-bm', '--blending_model', default=osp.join(dirname, '../weights/ijbc_msrunet_256_1_2_blending_v2.pth'),
                     metavar='PATH', help='blending model')
-parser.add_argument('-ci', '--criterion_id', default="vgg_loss.VGGLoss('../weights/vggface2_vgg19_256_1_2_id.pth')",
+parser.add_argument('-ci', '--criterion_id', default="vgg_loss.VGGLoss()".format(osp.join(dirname, '../weights/vggface2_vgg19_256_1_2_id.pth')),
                     metavar='OBJ', help='id criterion object')
 parser.add_argument('-mr', '--min_radius', default=2.0, type=float, metavar='F',
                     help='minimum distance between points in the appearance map')

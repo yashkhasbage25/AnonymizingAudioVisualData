@@ -6,3 +6,6 @@ audio_transform
 _site
 assets
 Gemfile.lock
+TestVideos/
+facebank/
+results/

@@ -5,6 +5,7 @@ from tqdm import tqdm
 import numpy as np
 import cv2
 import torch
+import os.path as osp
 import torch.nn as nn
 # from face_ssd import build_ssd
 from face_detection_dsfd.face_ssd_infer import SSD
@@ -30,6 +31,7 @@ class FaceDetector(object):
 
         # Initialize detection model
         self.net = SSD("test").to(self.device)
+        print(osp.abspath(detection_model_path))
         self.net.load_state_dict(torch.load(detection_model_path, map_location=self.device))        
         self.net.eval()
 
