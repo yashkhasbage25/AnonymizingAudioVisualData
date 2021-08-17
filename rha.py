@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import os
 import ffmpeg
 import argparse
@@ -7,24 +5,39 @@ import shutil
 import os.path as osp
 import subprocess
 
-pypath = "PYTHONPATH"
-if pypath in os.environ:
-    os.environ[pypath] += ":" + osp.abspath(".")
-else:
-    os.environ[pypath] = osp.abspath(".")
-
 def parse_args():
-    
+
+    file_description = '''
+    RHA - RedHenAnonymizer
+    Red Hen Lab
+
+    Given a video or audio, this tool anonymizes the face of person and his/her voice. 
+
+    You can either hide face or swap face with some other face. Audio is anonymized by changing the pitch.
+
+    Hider:
+    Replaces the face with a white rectangle
+    Usage: python rha.py --inpath <input_video_path> --outpath <output_video_path>
+
+    Swapper:
+    Swaps the face in video with a specified face. This is provided using the --facepath argument
+    Usage: python rha.py --inpath <input_video_path> --facepath facebank/white_male/1.jpg --outpath <output_video_path> 
+
+    Audio:
+    The pitch of audio is changed by --pitch argument. It has to be an integer. Normally, 3 or -3 will work good.
+    Increasing the pitch makes voice more female-like. While decreasing it makes male-like. 
+    Usage: python rha.py --inpath <input_video_path> --outpath <output_video_path> --pitch 5
+    '''    
     parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.ArgumentDefaultsHelpFormatter
+        description=file_description, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     
     parser.add_argument('--inpath', type=str, required=True, help='path to input video')
-    parser.add_argument('--facepath', type=str, default="", help='path to anonymous (target) face, can be a static video or a image. If no facepath is provided, the face will be hided.')
+    parser.add_argument('--facepath', type=str, default="", help='path to anonymous (target) face, can be a static video or a image. If no facepath is provided, the face will be hided. Hence, this argument is optional.')
     parser.add_argument('--outpath', type=str, required=True, help='path to output video, should be a mp4 video')
-    parser.add_argument('--pitch', type=float, required=True, help='pitch change amount. can be +/-')
-    parser.add_argument('--cpu_only', action='store_true', help='run on cpu only. however this flag is only for swapper. hider will use/not use gpu depending on the tensorflow type you have installed. for tensorflow you can have a gpu or a cpu version')
-    parser.add_argument('-pdb', action='store_true', help='run with pdb')
+    parser.add_argument('--pitch', type=float, default=3, help='pitch change amount, can be +/-')
+    parser.add_argument('--cpu_only', action='store_true', help='Run on cpu only. However this flag is only for swapper. Hider will use/not use gpu depending on the tensorflow type you have installed. For tensorflow you can have a gpu or a cpu version.')
+    parser.add_argument('-pdb', action='store_true', help='run with pdb debugger')
     
     return parser.parse_args()
 
@@ -73,7 +86,8 @@ if __name__ == '__main__':
         
 
     if args.facepath:
-        assert osp.exists('fsgan/inference/swap.py'), 'path not found: fsgan/inference/swap.py'
+        swappy_path = osp.join(osp.dirname(__file__), 'fsgan', 'inference', 'swap.py')
+        assert osp.exists(swappy_path), f'path not found: {swappy_path}'
         facepath = osp.abspath(args.facepath)
         assert osp.exists(facepath), f'facepath does not exist {facepath}'
         print("Swapping faces, with the face:", facepath)
@@ -83,7 +97,7 @@ if __name__ == '__main__':
             device_flag = " --cpu_only "
         # swap faces
         fsgan_outpath = osp.join(temp_dir, 'fsgan_out.mp4')
-        command = f'cd fsgan/inference; python swap.py {facepath} -t {inpath} -o {fsgan_outpath} --seg_remove_mouth --encoder_codec mp4v {device_flag}'
+        command = f'python {swappy_path} {facepath} -t {inpath} -o {fsgan_outpath} --seg_remove_mouth --encoder_codec mp4v {device_flag}'
         error = os.system(command)
         if error:
             raise Exception(f'unable to swap faces. Check fsgan. error code: {error}')
@@ -92,7 +106,9 @@ if __name__ == '__main__':
     else:    
         print("Hiding the face, as the facepath argument was empty")
         visually_anon_output = osp.join(temp_dir, "hidden_face.mp4")
-        command = f"python hide_face_robust.py --inpath {inpath} --outpath {visually_anon_output}"
+        hide_face_py_path = osp.join(osp.dirname(__file__), 'hide_face_robust.py')
+        assert osp.exists(hide_face_py_path), f"file not found: {hide_face_py_path}"
+        command = f"python {hide_face_py_path} --inpath {inpath} --outpath {visually_anon_output}"
         error = os.system(command)
         if error:
             raise Exception(f"unable to run face hider. Check hide_face_robust.py. error code: {error}")
@@ -105,7 +121,10 @@ if __name__ == '__main__':
         f"ffmpeg -y -i {inpath} -vn {tmpaudiopath2}",
         shell=True
     )
-    cmd = f"python audio.py --inpath {tmpaudiopath2} --outpath {tmpaudiopath1} --tr pitch --pitch_n_semitones {args.pitch}"
+    
+    audio_py_path = osp.join(osp.dirname(__file__), 'audio.py')
+    assert osp.exists(audio_py_path), f"file not found: {audio_py_path}"
+    cmd = f"python {audio_py_path} --inpath {tmpaudiopath2} --outpath {tmpaudiopath1} --tr pitch --pitch_n_semitones {args.pitch}"
     error = os.system(
         cmd
     )
