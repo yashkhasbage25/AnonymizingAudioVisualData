@@ -11,6 +11,8 @@ The RHA (Red Hen Anonymizer) is used to anonymize the faces in videos. You can e
 
 ### Dependencies
 
+*RHA strictly uses python3. There is no preferred version of python3, but any latest version will work.*
+
 Audio anonymizer requires sox
 
 ```bash
@@ -70,6 +72,14 @@ This will download the pretrained models at correct places.
 *** RHA face-swapper cannot be used at all without this step ***
 
 ### Running RHA
+
+#### For CWRU HPC Users
+
+There are some kernel incompatibilities for K40 GPUs. Hence, the following constraint `-C 'gpu2v100|gpu4v100'` has to be added for gpu types.
+
+```bash
+srun -p gpu --gpus 1 --mem 8000 -C 'gpu2v100|gpu4v100' --pty bash
+```
 
 Enter into the cloned repo
 ```bash
