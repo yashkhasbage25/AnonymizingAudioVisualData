@@ -69,6 +69,23 @@ python download_fsgan_models.py -m v2
 
 This will download the pretrained models at correct places.
 
+### Downloading Face Detector Weights
+
+Install gdown using 
+```bash
+pip install gdown
+```
+
+and download the weights 
+
+```bash
+gdown https://drive.google.com/u/0/uc?id=1WeXlNYsM6dMP3xQQELI-4gxhwKUQxc3-
+```
+
+Place the weights at face_detection_dsfd/weights/WIDERFace_DSFD_RES152.pth
+
+Unlike the FSGAN weights, these weights are publicly available. 
+
 *** RHA face-swapper cannot be used at all without this step ***
 
 ### Running RHA
