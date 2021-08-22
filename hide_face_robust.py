@@ -29,9 +29,6 @@ def parse_args():
     parser.add_argument('--distance_threshold', type=float, default=default_distance_threshold, help='distance threshold for defining closeness')
     parser.add_argument('--time_delta', type=int, default=default_time_delta, help='time delta')
     parser.add_argument('--shape', default=default_shape, choices=shape_choices, help='shape for artifact')
-    # parser.add_argument('-rf', '--resize_factor', type=float, default=default_resize_factor, help='resize factor')
-    # parser.add_argument('-dt', '--detector', type=str, default=default_detector, choices=choices_detector, help='detector type')
-    # parser.add_argument('--haarpath', type=str, default=default_haar_cascade_path, help='path to haar cascade xml')
     parser.add_argument('-pdb', action='store_true', help='run with pdb')
     
     return parser.parse_args()
@@ -109,44 +106,39 @@ if __name__ == '__main__':
     if args.pdb:
         import pdb
         pdb.set_trace()
-        
-    np.random.seed(0)
-    
+
+    # videocapture        
     assert osp.exists(args.inpath), args.inpath + " not found"
     vidcap = cv2.VideoCapture(args.inpath)
 
+    # video meta data
     frame_count, fps, width, height = get_video_properties(vidcap)
-    
-    # if args.resize_factor > 0:
-    #     width = int(width * args.resize_factor)
-    #     height = int(height * args.resize_factor)
 
+    # video writer
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    # fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    
     writer = cv2.VideoWriter(args.outpath, fourcc, fps, (width, height))
     
+    # white color for hider artifacts
     white_color = (255, 255, 255)
+    # mtcnn the acutal face detector
     mtcnn = MTCNN()
     
     boxes_nearby_times = dict()
     frames_nearby_times = dict()
     
+    # the "close" distance threshold
     close = args.distance_threshold * min(height, width)
     
     for nframe in tqdm(range(frame_count)):
         
         success, img = vidcap.read()
         assert success, 'not able to read from video'
-        # if args.resize_factor > 0:
-        #     img = cv2.resize(img, (width, height))
-
         
         # detect faces
         frames_nearby_times[nframe] = img
-        # what to do when no faces are detected?
         rgbimg = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         faces = mtcnn.detect_faces(rgbimg)
+        # faces detected
         faces = [face['box'] for face in faces]
         boxes_nearby_times[nframe] = [Box(*face) for face in faces]
         
@@ -155,6 +147,7 @@ if __name__ == '__main__':
         this_t = nframe
         next_t = nframe + args.time_delta
           
+        # see nearby frames
         if prev_t < 0:
             pass          
         elif prev_t >= 0 and prev_prev_t < 0:
@@ -171,44 +164,16 @@ if __name__ == '__main__':
             prev_prev_boxes = boxes_nearby_times[prev_prev_t]
             prev_boxes = boxes_nearby_times[prev_t]    
             this_boxes = boxes_nearby_times[this_t]
-            
-            # for ppb in prev_prev_boxes:
-            #     for tb in this_boxes:
-            #         if Box.distance(tb, ppb) < close:
-            #             avg_box = Box.average(tb, ppb)
-            #             exists = False
-            #             for pb in prev_boxes:
-            #                 if Box.distance(avg_box, pb) < close:
-            #                     exists = True
-            #                     break
-            #             if not exists:
-            #                 prev_boxes.append(avg_box)
-            #                 print('filled gap!!!')
+
             img = frames_nearby_times[prev_t]
             faces = boxes_nearby_times[prev_t]
             faces = [face.tolist() for face in faces]
             if len(faces) != 2:
                 pass
-                # print(nframe, 'len(faces)', len(faces))
             for face in faces:
                 draw_box(face, img, args.shape, white_color)
             assert img.shape == (height, width, 3), f'img.shape = {img.shape}, height = {height}, width = {width}'
             writer.write(img)
             del frames_nearby_times[prev_t]
-            
-        
-    # for nframe in range(frame_count + 1, frame_count + args.time_delta):
-    #     this_t = nframe
-    #     prev_prev_t = this_t - 2 * args.time_delta
-    #     prev_t = this_t - args.time_delta
-    #     next_t = this_t + args.time_delta
-        
-    #     img = frames_nearby_times[prev_t]
-    #     faces = boxes_nearby_times[prev_t]
-    #     faces = [face.tolist() for face in faces]
-    #     for face in faces:
-    #         draw_box(face, img, args.shape, white_color)
-
-    #     writer.write(img)
         
     writer.release()

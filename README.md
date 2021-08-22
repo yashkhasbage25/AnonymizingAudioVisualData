@@ -1,7 +1,9 @@
 # AnonymizingAudioVisualData
-GSOC-2021 Project with RedHen Labs
+GSOC-2021 Project with RedHen Lab
 
 The audio-visual data with RedHen Labs is not freely shareable due to privacy issues. Hence, using audio processing methods, classical computer vision algorithm and deep learning techniques, we propose an anonymization engine. 
+
+The final product is available as the RedHenAnonymizer (RHA) that can anonymize human faces and audio. 
 
 ## About
 

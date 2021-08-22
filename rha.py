@@ -50,15 +50,19 @@ if __name__ == '__main__':
         
     assert osp.exists(args.inpath), 'path not found: ' + args.inpath
 
-    
+    # create a temporary file system to store the intermediate outputs
+
     temp_dir = osp.abspath('anon_tmp_{}_{}'.format(osp.basename(args.inpath), osp.basename(args.facepath)))
     os.makedirs(temp_dir, exist_ok=True)
     inpath = osp.abspath(args.inpath)
     outpath = osp.abspath(args.outpath)
     
     metadata = ffmpeg.probe(inpath)
+    # right now, just works on 2 stream data. 
+    # will not work on audio-less videos which rarely occur
     assert len(metadata) == 2, '2 streams are not found in input'
     
+    # get video and audio meta data, if exeists
     video_meta = None
     audio_meta = None
     for m in metadata['streams']:
@@ -69,6 +73,7 @@ if __name__ == '__main__':
         else:
             raise Exception("unknown codec_type: {}".format(m['codec_type']))
     
+    # get start times of audio and video, if exists
     video_start = None
     audio_start = None
     assert (video_meta or audio_meta), 'neither video nor audio is present in input file'
@@ -84,7 +89,7 @@ if __name__ == '__main__':
     if audio_start:
         audio_start_arg = f" -itsoffset {audio_start} "
         
-
+    # use face swapper if --facepath is provided
     if args.facepath:
         swappy_path = osp.join(osp.dirname(__file__), 'fsgan', 'inference', 'swap.py')
         assert osp.exists(swappy_path), f'path not found: {swappy_path}'
@@ -104,6 +109,7 @@ if __name__ == '__main__':
         
         visually_anon_output = fsgan_outpath
     else:    
+        # use face hider if --facepath is not provided
         print("Hiding the face, as the facepath argument was empty")
         visually_anon_output = osp.join(temp_dir, "hidden_face.mp4")
         hide_face_py_path = osp.join(osp.dirname(__file__), 'hide_face_robust.py')
@@ -113,15 +119,18 @@ if __name__ == '__main__':
         if error:
             raise Exception(f"unable to run face hider. Check hide_face_robust.py. error code: {error}")
     
+    # save the intermediate audio files as .wav
     audcodec = 'wav'
     tmpaudiopath1 = osp.join(temp_dir, f'aud1.{audcodec}')  
     tmpaudiopath2 = osp.join(temp_dir, f'aud2.{audcodec}')
     
+    # extract audio
     subprocess.call(
         f"ffmpeg -y -i {inpath} -vn {tmpaudiopath2}",
         shell=True
     )
     
+    # transform the audio
     audio_py_path = osp.join(osp.dirname(__file__), 'audio.py')
     assert osp.exists(audio_py_path), f"file not found: {audio_py_path}"
     cmd = f"python {audio_py_path} --inpath {tmpaudiopath2} --outpath {tmpaudiopath1} --tr pitch --pitch_n_semitones {args.pitch}"
@@ -131,13 +140,15 @@ if __name__ == '__main__':
     if error:
         raise Exception(f"unable to change audio. Check audio.py. error code: {error}")
     
-
+    # combine anonymized audio and video
     cmd = f"ffmpeg -y {video_start_arg} -i {visually_anon_output} {audio_start_arg} -i {tmpaudiopath1} -vcodec copy -acodec aac -map 0:v:0 -map 1:a:0 {outpath}"
     print('combining audio and video with command:', cmd)
     subprocess.call(
         cmd,
         shell=True
     )
+
+    # remove the temporary files
     shutil.rmtree(temp_dir)
     print('video saved at:', outpath)
     

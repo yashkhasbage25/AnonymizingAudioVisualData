@@ -1,13 +1,9 @@
 
 import os
-# import av
 import sox
 import argparse
 import os.path as osp
 import numpy as np
-# import moviepy.editor as mp
-# import scipy.io.wavfile as wavefile
-# from playsound import playsound
 
 def parse_args():
 
@@ -116,10 +112,6 @@ if __name__ == '__main__':
         pdb.set_trace()
 
     assert osp.exists(args.inpath)
-    # path1, path2 = get_temp_audio_paths(args.inpath)
-
-    # vidclip = mp.VideoFileClip(args.inpath)
-    # vidclip.audio.write_audiofile(path1)
 
     tfm = sox.Transformer()
 
@@ -195,14 +187,4 @@ if __name__ == '__main__':
             depth=args.tremolo_depth
         )
 
-
-    # if osp.exists(args.outpath):
-    #     os.remove(args.outpath)
     tfm.build_file(args.inpath, args.outpath)
-    # vidclip = vidclip.set_audio(mp.AudioFileClip(path2))
-    # playsound(args.output_path)
-    # vidclip = vidclip.resize(0.2)
-    # vidclip.write_videofile(args.outpath, audio=path2, 
-    #     temp_audiofile="temp-audio.mp3", 
-    #     remove_temp=True, codec="libx264", audio_codec='libmp3lame')
-    # vidclip.close()
