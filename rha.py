@@ -36,13 +36,33 @@ def parse_args():
     )
     
     anonymize_choices = ['audio', 'video', 'audiovideo']
+    visual_anonymization_choices = ['hider', 'swapper', 'stickfigs']
+    hider_shape_choices = ['rect', 'circle', 'oval']
+    
+    hider_shape_default = hider_shape_choices[0]
+    default_pitch = 3
+    default_distortion_gain_db = 20
+    default_echo_gain_in = 0.8
+    default_openpose_bind = '/mnt/rds/redhen/gallina/home/yck5/'
+    default_openpose_container = '/mnt/rds/redhen/gallina/home/yck5/safe/RHA/stickfigs.sif'
+    default_openpose_modelfolder = '/opt/openpose_models/'
+    default_openpose_keypoint = ''
     
     parser.add_argument('-i', '--inpath', type=str, required=True, help='path to input video')
-    parser.add_argument('-f', '--facepath', type=str, default="", help='path to anonymous (target) face, can be a static video or a image. If no facepath is provided, the face will be hided. Hence, this argument is optional.')
+    parser.add_argument('-f', '--facepath', type=str, default="", help='path to anonymous (target) face, can be a static video or a image. This argument is only useful for -va=swapper')
     parser.add_argument('-o', '--outpath', type=str, required=True, help='path to output video, should be a mp4 video')
+    parser.add_argument('-va', '--visual_anonymization', type=str, choices=visual_anonymization_choices, help='what kind of visual anonymization is desired?')
     parser.add_argument('-a', '--anonymize', type=str, required=True, choices=anonymize_choices, help='anonymize which data? audio, video or audio+video')
-    parser.add_argument('-p', '--pitch', type=float, default=3, help='pitch change amount, can be +/-')
+    parser.add_argument('-p', '--pitch', type=float, default=default_pitch, help='pitch change amount, can be +/-')
+    parser.add_argument('--distortion', type=float, default=0, help=f'amount of distortion to be added in the audio, preferred: {default_distortion_gain_db}')
+    parser.add_argument('--echo', type=float, default=0, help=f'amount of echo to be added in the audio, preferred: {default_echo_gain_in}')
     parser.add_argument('--cpu_only', action='store_true', help='Run on cpu only. However this flag is only for swapper. Hider will use/not use gpu depending on the tensorflow type you have installed. For tensorflow you can have a gpu or a cpu version.')
+    parser.add_argument('--hider_shape', type=str, default=hider_shape_default, help='shape of hiding artifiact')
+    parser.add_argument('--openpose_blending', action='store_true', help='blend Openpose output. This will add stick figures on the video. In disabled state, the stick figures will only have black background.')
+    parser.add_argument('--openpose_bind', type=str, default=default_openpose_bind, help=f'bindpath for container, default={default_openpose_bind}')
+    parser.add_argument('--openpose_container', type=str, default=default_openpose_container, help=f'Openpose container, default={default_openpose_container}')
+    parser.add_argument('--openpose_modelfolder', type=str, default=default_openpose_modelfolder, help=f'model folder for openpose weights, default={default_openpose_modelfolder}')
+    parser.add_argument('--openpose_keypoints', type=str, default=default_openpose_keypoint, help=f'path for openpose keypoints, default={default_openpose_keypoint}')
     parser.add_argument('-pdb', action='store_true', help='run with pdb debugger')
     
     return parser.parse_args()
@@ -127,6 +147,8 @@ if __name__ == '__main__':
 
         audcodec = 'wav'
         vidcodec = 'mp4'
+        if args.visual_anonymization == 'stickfigs':
+            vidcodec = 'avi'
 
         videoonly_path = osp.join(temp_dir, f'videoonly.{vidcodec}')
         audioonly_path = osp.join(temp_dir, f'audioonly.{audcodec}')
@@ -152,8 +174,9 @@ if __name__ == '__main__':
             outaudio_path = audioonly_path
             
         if 'video' in mediatype and 'video' in anonymize:
-            # use face swapper if --facepath is provided
-            if args.facepath:
+            
+            if args.visual_anonymization == 'swapper':
+                assert args.facepath is not None, '--facepath option cannot be None for visual_anonymization/va=swapper'
                 swappy_path = osp.join(osp.dirname(__file__), 'fsgan', 'inference', 'swap.py')
                 assert osp.exists(swappy_path), f'path not found: {swappy_path}'
                 facepath = osp.abspath(args.facepath)
@@ -171,18 +194,53 @@ if __name__ == '__main__':
                     raise Exception(f'unable to swap faces. Check fsgan. error code: {error}')
                 
                 outvideo_path = fsgan_outpath
-            else:    
+            
+            elif args.visual_anonymization == 'hider':
                 # use face hider if --facepath is not provided
                 print("Hiding the face, as the facepath argument was empty")
                 mtcnn_outpath = osp.join(temp_dir, "hidden_face.mp4")
                 hide_face_py_path = osp.join(osp.dirname(__file__), 'hide_face_robust.py')
                 assert osp.exists(hide_face_py_path), f"file not found: {hide_face_py_path}"
-                mtcnn_cmd = f"python3 {hide_face_py_path} --inpath {videoonly_path} --outpath {mtcnn_outpath}"
+                mtcnn_cmd = f"python3 {hide_face_py_path} --inpath {videoonly_path} --outpath {mtcnn_outpath} --shape {args.hider_shape}"
                 error = os.system(mtcnn_cmd)
                 if error:
                     raise Exception(f"unable to run face hider. Check hide_face_robust.py. error code: {error}")
                 
                 outvideo_path = mtcnn_outpath
+                
+            elif args.visual_anonymization == 'stickfigs':
+                
+                # the core command to container has to be like: 
+                # singularity run -B /mnt/rds/redhen/gallina/home/yck5/ --nv stickfigs.sif 
+                # --video /mnt/rds/redhen/gallina/home/yck5/TestVideos/q.mp4 --face --hand 
+                # -write_video /mnt/rds/redhen/gallina/home/yck5/results/out.avi 
+                # --display 0 --model_folder /opt/openpose_models/
+                
+                # first let's check container
+                binding_path = args.openpose_bind
+                container_path = args.openpose_container
+                model_folder = args.openpose_modelfolder
+                keypoints_folder = args.openpose_keypoints
+                
+                keypoints_args = ''
+                if keypoints_folder:
+                    keypoints_args = f" --write_json {keypoints_folder} "
+                
+                blending_args = ''
+                if not args.openpose_blending:
+                    blending_args = ' --disable_blending '
+
+                stickfigs_path = osp.join(temp_dir, f'stickfigsvideo.{vidcodec}')
+                cmd = f"singularity run -B {binding_path} --nv {container_path} --video {videoonly_path} --face --hand -write_video {stickfigs_path} --display 0 --model_folder {model_folder} {keypoints_args} {blending_args}"
+                print('openpose command', cmd)
+                error = os.system(cmd)
+                if error:
+                    raise Exception(f'unable to generate stick figure video using singularity container. error code: {error}')
+                outvideo_path = stickfigs_path
+
+            else:
+                
+                raise Exception(f"unknown visual_anonymization/va: {args.visual_anonymization}")
 
         if 'audio' in mediatype and 'audio' in anonymize:
             # save the intermediate audio files as .wav
@@ -191,7 +249,10 @@ if __name__ == '__main__':
             # transform the audio
             audio_py_path = osp.join(osp.dirname(__file__), 'audio.py')
             assert osp.exists(audio_py_path), f"file not found: {audio_py_path}"
-            audio_cmd = f"python3 {audio_py_path} --inpath {audioonly_path} --outpath {tmpaudiopath1} --tr pitch --pitch_n_semitones {args.pitch}"
+            
+            audio_transforms_args = f' --tr pitch distortion echo --pitch_n_semitones {args.pitch} --distortion_gain_db {args.distortion} --echo_gain_in {args.echo} '
+            
+            audio_cmd = f"python3 {audio_py_path} --inpath {audioonly_path} --outpath {tmpaudiopath1} {audio_transforms_args}"
             print('Anonymizing audio...')
             error = os.system(audio_cmd)
             if error:
